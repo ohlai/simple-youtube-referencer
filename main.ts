@@ -52,7 +52,7 @@ export default class SimpleYoutubeReferencer extends Plugin {
                 if (activeFile && activeFile.extension === "md") {
                     this.updateDetailsInFrontMatter(activeFile);
                 } else {
-                    console.log("No active Markdown file found.");
+                    // No active Markdown file found.
                 }
             },
         });
@@ -95,7 +95,7 @@ export default class SimpleYoutubeReferencer extends Plugin {
 		let inFrontmatter = false;
 		let currentArrayKey: string | null = null;
 		let currentArray: string[] = [];
-		try {
+		
 		for (const line of lines) {
 			if (line.trim() === "---") {
 				inFrontmatter = !inFrontmatter;
@@ -129,11 +129,7 @@ export default class SimpleYoutubeReferencer extends Plugin {
 				}
 			}
 		}
-		}
-		catch (error)
-		{
-			console.log(error)
-		}	
+		
 
 		// Check if there is an array still being parsed
 		if (currentArrayKey) {
