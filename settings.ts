@@ -84,6 +84,30 @@ export class SYRSettingsTab extends PluginSettingTab {
                         await this.plugin.saveSettings();
                     })
             );
+            
+        new Setting(containerEl)
+            .setName("Include Channel ID")
+            .setDesc("Include channel ID in frontmatter")
+            .addToggle((toggle) =>
+                toggle
+                    .setValue(this.plugin.settings.includeChannelId)
+                    .onChange(async (value) => {
+                        this.plugin.settings.includeChannelId = value;
+                        await this.plugin.saveSettings();
+                    })
+            );
+
+        new Setting(containerEl)
+            .setName("Include Default Audio Language")
+            .setDesc("Include default audio language in frontmatter")
+            .addToggle((toggle) =>
+                toggle
+                    .setValue(this.plugin.settings.includeDefaultAudioLanguage)
+                    .onChange(async (value) => {
+                        this.plugin.settings.includeDefaultAudioLanguage = value;
+                        await this.plugin.saveSettings();
+                    })
+            );
 
         const includeDescriptionSetting = new Setting(containerEl)
             .setName("Include Description")

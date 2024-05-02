@@ -66,12 +66,15 @@ export default class SimpleYoutubeReferencer extends Plugin {
         }
 
         const content = await this.app.vault.read(file);
-        const match = content.match(/(?:https?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|playlist\?|watch\?v=|watch\?.+(?:&|&#38;);v=))([a-zA-Z0-9\-_]{11})?(?:(?:\?|&|&#38;)index=((?:\d){1,3}))?(?:(?:\?|&|&#38;)?list=([a-zA-Z\-_0-9]{34}))?(?:\S+)?/g);
-		const firstMatch = match[0].slice(0, -1);
+		const regex = /(?:https?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|playlist\?|watch\?v=|watch\?.+(?:&|&);v=))(?<videoID>[a-zA-Z0-9\-_]{11})?(?:(?:\?|&|&)index=((?:\d){1,3}))?(?:(?:\?|&|&)?list=([a-zA-Z\-_0-9]{34}))?(?:\S+)?/g
+
+        const match = regex.exec(content);[1]
+		console.log(match);
+		
         if (match) {
-            const videoUrl = firstMatch
+			let videoID = match.groups.videoID;
             try {
-                const [channelName, videoTitle, videoThumbnailURL, videoPublishedAt, channelId, defaultAudioLanguage, description, videoTags] = await this.getVideoDetails(videoUrl, apiKey);
+                const [channelName, videoTitle, videoThumbnailURL, videoPublishedAt, channelId, defaultAudioLanguage, description, videoTags] = await this.getVideoDetails(videoID, apiKey);
 				
                 let newContent = content;
                 const frontmatter = this.parseFrontmatter(content);
@@ -208,8 +211,7 @@ export default class SimpleYoutubeReferencer extends Plugin {
 		return newContent;
 	}
 
-	private async getVideoDetails(videoUrl: string, apiKey: string): Promise<string[]> {
-		const videoId = new URLSearchParams(new URL(videoUrl).search).get("v");
+	private async getVideoDetails(videoId: string, apiKey: string): Promise<string[]> {
 		const response = await axios.get(`https://www.googleapis.com/youtube/v3/videos?id=${videoId}&key=${apiKey}&part=snippet,contentDetails`);
 		const snippet = response.data.items[0].snippet;
 		
