@@ -1,0 +1,9 @@
+{
+	"id": "obsidian-example-plugin",
+	"name": "Simple Youtube Refrencer",
+	"version": "1.0.0",
+	"minAppVersion": "0.15.0",
+	"description": "This plugin adds a command which finds the first Youtube url and adds information about the video to the properties of the document.",
+	"author": "ohlai",
+	"isDesktopOnly": false
+}
