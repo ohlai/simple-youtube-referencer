@@ -14,7 +14,7 @@ interface SYRSettings {
     formatDescriptionToOneLine: boolean;
 	includeVideoTags: boolean;
 }
-
+ 
 const DEFAULT_SETTINGS: Partial<SYRSettings> = {
     apiKey: "",
     includeChannel: true,
@@ -67,9 +67,9 @@ export default class SimpleYoutubeReferencer extends Plugin {
 
         const content = await this.app.vault.read(file);
         const match = content.match(/(?:https?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|playlist\?|watch\?v=|watch\?.+(?:&|&#38;);v=))([a-zA-Z0-9\-_]{11})?(?:(?:\?|&|&#38;)index=((?:\d){1,3}))?(?:(?:\?|&|&#38;)?list=([a-zA-Z\-_0-9]{34}))?(?:\S+)?/g);
-
+		const firstMatch = match[0].slice(0, -1);
         if (match) {
-            const videoUrl = match[0];
+            const videoUrl = firstMatch
             try {
                 const [channelName, videoTitle, videoThumbnailURL, videoPublishedAt, channelId, defaultAudioLanguage, description, videoTags] = await this.getVideoDetails(videoUrl, apiKey);
 				
@@ -95,7 +95,7 @@ export default class SimpleYoutubeReferencer extends Plugin {
 		let inFrontmatter = false;
 		let currentArrayKey: string | null = null;
 		let currentArray: string[] = [];
-
+		try {
 		for (const line of lines) {
 			if (line.trim() === "---") {
 				inFrontmatter = !inFrontmatter;
@@ -129,6 +129,11 @@ export default class SimpleYoutubeReferencer extends Plugin {
 				}
 			}
 		}
+		}
+		catch (error)
+		{
+			console.log(error)
+		}	
 
 		// Check if there is an array still being parsed
 		if (currentArrayKey) {
@@ -184,6 +189,7 @@ export default class SimpleYoutubeReferencer extends Plugin {
 				}
 				frontmatter += `\ndescription: ${description}`;
 			}
+
 			if (this.settings.includeVideoTags) frontmatter += `\nvideoTags:\n${videoTags.map(tag => `  - ${tag}`).join("\n")}`;
 			newContent = frontmatter + `\n---\n${content}`;
 		} else {
@@ -219,7 +225,7 @@ export default class SimpleYoutubeReferencer extends Plugin {
 			snippet.channelId,
 			snippet.defaultAudioLanguage,
 			snippet.description,
-			snippet.tags, // Ensure tags exist, if not, provide an empty array
+			snippet.tags || [], // Ensure tags exist, if not, provide an empty array
 		];
 	}
 }
