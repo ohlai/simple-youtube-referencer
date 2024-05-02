@@ -1,7 +1,7 @@
 {
 	"id": "simple-youtube-referencer",
 	"name": "Simple Youtube Referencer",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"minAppVersion": "0.15.0",
 	"description": "Adds metadata from link youtube video to frontmatter of a document.",
 	"author": "ohlai",
